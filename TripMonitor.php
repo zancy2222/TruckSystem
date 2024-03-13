@@ -1,3 +1,8 @@
+<?php
+include 'Partials/dbConn.php';
+$sql = "SELECT * FROM TripMonitor";
+$result = mysqli_query($conn, $sql);
+?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -43,34 +48,34 @@
      </style>
    </head>
 <body>
-  <div class="sidebar">
+<div class="sidebar">
     <div class="logo-details">
         <div class="logo_name">Truck Management</div>
         <i class='bx bx-menu' id="btn" ></i>
     </div>
     <ul class="nav-list">
-        <li>
-            <a href="index.html">
-                <i class='bx bxs-ambulance'></i>
-    
-                <span class="links_name">Add truck</span>
-            </a>
-             <span class="tooltip">Add trucks</span>
-          </li>
-          <li>
-           <a href="viewTruck.html">
-            <i class='bx bxs-truck'></i>
-             <span class="links_name">View Truck</span>
-           </a>
-           <span class="tooltip">View Truck</span>
-         </li>
-     <li>
-       <a href="TripMonitor.html">
-        <i class='bx bxs-folder-open'></i>
-         <span class="links_name">Trip Monitor</span>
+      <li>
+        <a href="index.php">
+            <i class='bx bxs-ambulance'></i>
+
+            <span class="links_name">Add truck</span>
+        </a>
+         <span class="tooltip">Add trucks</span>
+      </li>
+      <li>
+       <a href="viewTruck.php">
+        <i class='bx bxs-truck'></i>
+         <span class="links_name">View Truck</span>
        </a>
-       <span class="tooltip">Trip Monitor</span>
+       <span class="tooltip">View Truck</span>
      </li>
+     <li>
+      <a href="TripMonitor.php">
+       <i class='bx bxs-folder-open'></i>
+        <span class="links_name">Trip Monitor</span>
+      </a>
+      <span class="tooltip">Trip Monitor</span>
+    </li>
      <li>
        <a href="#">
          <i class='bx bx-pie-chart-alt-2' ></i>
@@ -79,14 +84,14 @@
        <span class="tooltip">Analytics</span>
      </li>
      <li>
-       <a href="#">
+       <a href="generate.php">
         <i class='bx bxs-report' ></i>
          <span class="links_name">Generate Reports</span>
        </a>
        <span class="tooltip">Generate Reports</span>
      </li>
      <li>
-       <a href="#">
+       <a href="Repair.php">
         <i class='bx bx-cog'></i>
          <span class="links_name">Repair & Expenses</span>
        </a>
@@ -101,7 +106,6 @@
   
   <section class="home-section">
     <div class="text">Trip Monitor</div>
-
     <table class="trip-table">
         <thead>
             <tr>
@@ -115,17 +119,20 @@
             </tr>
         </thead>
         <tbody>
-
-            <tr>
-                <td>1</td>
-                <td>Client A</td>
-                <td>ABC123</td>
-                <td>2024-03-12</td>
-                <td>Source A</td>
-                <td>Destination A, Destination B</td>
-                <td>$100</td>
-            </tr>
-
+            <?php
+            // Loop through the result set and generate table rows
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>";
+                echo "<td>{$row['TripID']}</td>";
+                echo "<td>{$row['ClientName']}</td>";
+                echo "<td>{$row['PlateNumber']}</td>";
+                echo "<td>{$row['DeliveryDate']}</td>";
+                echo "<td>{$row['Source']}</td>";
+                echo "<td>{$row['Destination']}</td>";
+                echo "<td>{$row['Rate']}</td>";
+                echo "</tr>";
+            }
+            ?>
         </tbody>
     </table>
 </section>
@@ -156,3 +163,7 @@
   </script>
 </body>
 </html>
+
+<?php
+mysqli_close($conn);
+?>

@@ -1,3 +1,13 @@
+<?php
+// Include the database connection
+include 'Partials/dbConn.php';
+
+// SQL query to retrieve data from the Truck table
+$sql = "SELECT * FROM Truck";
+$result = mysqli_query($conn, $sql);
+?>
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -73,34 +83,34 @@
      </style>
    </head>
 <body>
-  <div class="sidebar">
+<div class="sidebar">
     <div class="logo-details">
         <div class="logo_name">Truck Management</div>
         <i class='bx bx-menu' id="btn" ></i>
     </div>
     <ul class="nav-list">
-        <li>
-            <a href="index.html">
-                <i class='bx bxs-ambulance'></i>
-    
-                <span class="links_name">Add truck</span>
-            </a>
-             <span class="tooltip">Add trucks</span>
-          </li>
-          <li>
-           <a href="viewTruck.html">
-            <i class='bx bxs-truck'></i>
-             <span class="links_name">View Truck</span>
-           </a>
-           <span class="tooltip">View Truck</span>
-         </li>
-         <li>
-            <a href="TripMonitor.html">
-             <i class='bx bxs-folder-open'></i>
-              <span class="links_name">Trip Monitor</span>
-            </a>
-            <span class="tooltip">Trip Monitor</span>
-          </li>
+      <li>
+        <a href="index.php">
+            <i class='bx bxs-ambulance'></i>
+
+            <span class="links_name">Add truck</span>
+        </a>
+         <span class="tooltip">Add trucks</span>
+      </li>
+      <li>
+       <a href="viewTruck.php">
+        <i class='bx bxs-truck'></i>
+         <span class="links_name">View Truck</span>
+       </a>
+       <span class="tooltip">View Truck</span>
+     </li>
+     <li>
+      <a href="TripMonitor.php">
+       <i class='bx bxs-folder-open'></i>
+        <span class="links_name">Trip Monitor</span>
+      </a>
+      <span class="tooltip">Trip Monitor</span>
+    </li>
      <li>
        <a href="#">
          <i class='bx bx-pie-chart-alt-2' ></i>
@@ -109,14 +119,14 @@
        <span class="tooltip">Analytics</span>
      </li>
      <li>
-       <a href="#">
+       <a href="generate.php">
         <i class='bx bxs-report' ></i>
          <span class="links_name">Generate Reports</span>
        </a>
        <span class="tooltip">Generate Reports</span>
      </li>
      <li>
-       <a href="#">
+       <a href="Repair.php">
         <i class='bx bx-cog'></i>
          <span class="links_name">Repair & Expenses</span>
        </a>
@@ -143,19 +153,22 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Add rows dynamically based on your data -->
-            <tr>
-                <td>ABC123</td>
-                <td>Delivery</td>
-                <td>Toyota</td>
-                <td>123456</td>
-                <td>789012</td>
-                <td>
-                    <a href="#" class="update-link">UPDATE</a>
-                    <a href="#" class="delete-link">DELETE</a>
-                </td>
-            </tr>
-            <!-- Add more rows as needed -->
+            <?php
+            // Loop through the result set and generate table rows
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>";
+                echo "<td>{$row['PlateNumber']}</td>";
+                echo "<td>{$row['TruckType']}</td>";
+                echo "<td>{$row['TruckMake']}</td>";
+                echo "<td>{$row['EngineNumber']}</td>";
+                echo "<td>{$row['ChassisNumber']}</td>";
+                echo "<td>
+                        <a href='#' class='update-link'>UPDATE</a>
+                        <a href='#' class='delete-link'>DELETE</a>
+                      </td>";
+                echo "</tr>";
+            }
+            ?>
         </tbody>
     </table>
 </section>
@@ -186,3 +199,8 @@
   </script>
 </body>
 </html>
+
+<?php
+// Close the database connection
+mysqli_close($conn);
+?>
