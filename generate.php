@@ -82,7 +82,7 @@
       <span class="tooltip">Trip Monitor</span>
     </li>
      <li>
-       <a href="#">
+       <a href="graphs.php">
          <i class='bx bx-pie-chart-alt-2' ></i>
          <span class="links_name">Analytics</span>
        </a>
@@ -156,6 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Initialize variables for total rate earnings, highest and lowest trips
     $totalRateEarnings = 0;
     $locationTrips = [];
+    $sourceTrips = [];
     $totalTrips = 0;
 
     // Loop through the result set and generate table rows
@@ -184,6 +185,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
+        // Process source information
+        $source = trim($row['Source']);
+        if (empty($sourceTrips[$source])) {
+            $sourceTrips[$source] = 1;
+        } else {
+            $sourceTrips[$source]++;
+        }
+
         // Count total trips
         $totalTrips++;
     }
@@ -206,6 +215,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<tr>";
     echo "<td colspan='6'><b>Lowest Location Trip:</b></td>";
     echo "<td><b>{$lowestLocationTrip} - {$locationTrips[$lowestLocationTrip]}</b></td>";
+    echo "</tr>";
+
+    // Find highest source trip
+    $highestSourceTrip = array_search(max($sourceTrips), $sourceTrips);
+    echo "<tr>";
+    echo "<td colspan='6'><b>Highest Source Trip:</b></td>";
+    echo "<td><b>{$highestSourceTrip} - {$sourceTrips[$highestSourceTrip]}</b></td>";
+    echo "</tr>";
+
+    // Find lowest source trip
+    $lowestSourceTrip = array_search(min($sourceTrips), $sourceTrips);
+    echo "<tr>";
+    echo "<td colspan='6'><b>Lowest Source Trip:</b></td>";
+    echo "<td><b>{$lowestSourceTrip} - {$sourceTrips[$lowestSourceTrip]}</b></td>";
     echo "</tr>";
 
     echo "<tr>";

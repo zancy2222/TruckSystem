@@ -8,39 +8,7 @@
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <style>
-        .home-section {
-            padding: 20px;
-        }
 
-        .repair-expenses-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-
-        .repair-expenses-table th,
-        .repair-expenses-table td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .repair-expenses-table th {
-            background-color: #11101D;
-            color: white;
-        }
-
-        .repair-expenses-table tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        .repair-expenses-table td:last-child {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
      </style>
    </head>
 <body>
@@ -101,43 +69,9 @@
   </div>
   
   <section class="home-section">
-    <div class="text">Repair and expenses</div>
+    <div class="text">Graph</div>
 
-    <!-- Add the table for Repair and Expenses data -->
-    <table class="repair-expenses-table">
-        <thead>
-            <tr>
-                <th>Plate Number</th>
-                <th>Expense Date</th>
-                <th>Expense Type</th>
-                <th>Cost</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            // Include the database connection
-            include 'Partials/dbConn.php';
-
-            // Select data from RepairExpenses table
-            $sql = "SELECT * FROM RepairExpenses";
-            $result = mysqli_query($conn, $sql);
-
-            // Display data in the table
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo "<tr>";
-                echo "<td>{$row['PlateNumber']}</td>";
-                echo "<td>{$row['ExpenseDate']}</td>";
-                echo "<td>{$row['ExpenseType']}</td>";
-                echo "<td>{$row['Cost']}</td>";
-                echo "</tr>";
-            }
-
-            // Close the database connection
-            mysqli_close($conn);
-            ?>
-        </tbody>
-    </table>
-</section>
+  </section>
 
   <script>
   let sidebar = document.querySelector(".sidebar");

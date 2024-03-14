@@ -112,7 +112,7 @@ $result = mysqli_query($conn, $sql);
       <span class="tooltip">Trip Monitor</span>
     </li>
      <li>
-       <a href="#">
+       <a href="graphs.php">
          <i class='bx bx-pie-chart-alt-2' ></i>
          <span class="links_name">Analytics</span>
        </a>
