@@ -115,11 +115,28 @@
     </ul>
   </div>
 
-    <section class="home-section">
+  <section class="home-section">
     <div class="text">Generate reports</div>
 
     <form action="#" method="post" class="report-form">
-        <!-- Select month -->
+        <!-- Select year -->
+        <label for="year">Select Year:</label>
+        <select name="year" id="year">
+            <?php
+            $startYear = 2020;
+            $endYear = 2030;
+
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                echo "<option value='$year'>$year</option>";
+            }
+            ?>
+        </select>
+
+        <!-- Checkbox to select all months -->
+        <label for="selectAllMonths">Select all months on this year:</label>
+        <input type="checkbox" id="selectAllMonths" name="selectAllMonths">
+
+        <!-- Select individual month -->
         <label for="month">Select Month:</label>
         <select name="month" id="month">
             <?php
@@ -140,19 +157,6 @@
 
             foreach ($months as $monthNumber => $monthName) {
                 echo "<option value='$monthNumber'>$monthName</option>";
-            }
-            ?>
-        </select>
-
-        <!-- Select year -->
-        <label for="year">Select Year:</label>
-        <select name="year" id="year">
-            <?php
-            $startYear = 2020;
-            $endYear = 2030;
-
-            for ($year = $startYear; $year <= $endYear; $year++) {
-                echo "<option value='$year'>$year</option>";
             }
             ?>
         </select>
@@ -179,13 +183,18 @@
 
             // Check if the form is submitted
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                // Get the selected month and year
-                $selectedMonth = $_POST['month'];
+                // Get the selected year
                 $selectedYear = $_POST['year'];
 
-                // Adjust your SQL query based on the selected month and year
-                $sql = "SELECT * FROM TripMonitor WHERE ";
-                $sql .= "MONTH(DeliveryDate) = $selectedMonth AND YEAR(DeliveryDate) = $selectedYear";
+                // Check if "Select all months" checkbox is checked
+                if (isset($_POST['selectAllMonths'])) {
+                    // Generate reports for all months of the selected year
+                    $sql = "SELECT * FROM TripMonitor WHERE YEAR(DeliveryDate) = $selectedYear";
+                } else {
+                    // If not checked, generate report for the selected month and year
+                    $selectedMonth = $_POST['month'];
+                    $sql = "SELECT * FROM TripMonitor WHERE MONTH(DeliveryDate) = $selectedMonth AND YEAR(DeliveryDate) = $selectedYear";
+                }
 
                 $result = mysqli_query($conn, $sql);
 
@@ -268,10 +277,10 @@
             // Close the database connection
             mysqli_close($conn);
             ?>
-
         </tbody>
     </table>
 </section>
+
 
 
 
