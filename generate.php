@@ -102,147 +102,178 @@
        </a>
        <span class="tooltip">Repair & Expenses</span>
      </li>
-  
+     <li>
+       <a href="Total.php">
+       <i class='bx bx-money'></i>
+       <span class="links_name">Total Earnings</span>
+       </a>
+       <span class="tooltip">Total Earnings</span>
+     </li>
      <li class="profile">
          
      </li>
     </ul>
   </div>
-  
-  <section class="home-section">
-        <div class="text">Generate reports</div>
 
-        <form action="#" method="post" class="report-form">
-            <label for="reportType">Select Report Type:</label>
-            <select name="reportType" id="reportType">
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-            </select>
-            <button type="submit">Generate Report</button>
-        </form>
+    <section class="home-section">
+    <div class="text">Generate reports</div>
 
-        <table class="trip-table">
-            <thead>
-                <tr>
-                    <th>TRIP ID</th>
-                    <th>CLIENT NAME</th>
-                    <th>PLATE NUMBER</th>
-                    <th>DELIVERY DATE</th>
-                    <th>SOURCE</th>
-                    <th>DESTINATIONS</th>
-                    <th>RATE</th>
-                </tr>
-            </thead>
-            <tbody>
+    <form action="#" method="post" class="report-form">
+        <!-- Select month -->
+        <label for="month">Select Month:</label>
+        <select name="month" id="month">
             <?php
-// Include the database connection
-include 'Partials/dbConn.php';
+            $months = [
+                1 => 'January',
+                2 => 'February',
+                3 => 'March',
+                4 => 'April',
+                5 => 'May',
+                6 => 'June',
+                7 => 'July',
+                8 => 'August',
+                9 => 'September',
+                10 => 'October',
+                11 => 'November',
+                12 => 'December'
+            ];
 
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the selected report type
-    $selectedReportType = $_POST['reportType'];
-
-    // Adjust your SQL query based on the selected report type
-    $sql = "SELECT * FROM TripMonitor WHERE ";
-    if ($selectedReportType == "monthly") {
-        $sql .= "MONTH(DeliveryDate) = MONTH(CURRENT_DATE())";
-    } elseif ($selectedReportType == "yearly") {
-        $sql .= "YEAR(DeliveryDate) = YEAR(CURRENT_DATE())";
-    }
-
-    $result = mysqli_query($conn, $sql);
-
-    // Initialize variables for total rate earnings, highest and lowest trips
-    $totalRateEarnings = 0;
-    $locationTrips = [];
-    $sourceTrips = [];
-    $totalTrips = 0;
-
-    // Loop through the result set and generate table rows
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>{$row['TripID']}</td>";
-        echo "<td>{$row['ClientName']}</td>";
-        echo "<td>{$row['PlateNumber']}</td>";
-        echo "<td>{$row['DeliveryDate']}</td>";
-        echo "<td>{$row['Source']}</td>";
-        echo "<td>{$row['Destination']}</td>";
-        echo "<td>{$row['Rate']}</td>";
-        echo "</tr>";
-
-        // Calculate total rate earnings
-        $totalRateEarnings += $row['Rate'];
-
-        // Process destination information
-        $destinations = explode(',', $row['Destination']);
-        foreach ($destinations as $destination) {
-            $destination = trim($destination);
-            if (empty($locationTrips[$destination])) {
-                $locationTrips[$destination] = 1;
-            } else {
-                $locationTrips[$destination]++;
+            foreach ($months as $monthNumber => $monthName) {
+                echo "<option value='$monthNumber'>$monthName</option>";
             }
-        }
+            ?>
+        </select>
 
-        // Process source information
-        $source = trim($row['Source']);
-        if (empty($sourceTrips[$source])) {
-            $sourceTrips[$source] = 1;
-        } else {
-            $sourceTrips[$source]++;
-        }
+        <!-- Select year -->
+        <label for="year">Select Year:</label>
+        <select name="year" id="year">
+            <?php
+            $startYear = 2020;
+            $endYear = 2030;
 
-        // Count total trips
-        $totalTrips++;
-    }
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                echo "<option value='$year'>$year</option>";
+            }
+            ?>
+        </select>
 
-    // Display summary information
-    echo "<tr>";
-    echo "<td colspan='6'><b>Total Rate Earnings:</b></td>";
-    echo "<td><b>{$totalRateEarnings}</b></td>";
-    echo "</tr>";
+        <button type="submit">Generate Report</button>
+    </form>
 
-    // Find highest location trip
-    $highestLocationTrip = array_search(max($locationTrips), $locationTrips);
-    echo "<tr>";
-    echo "<td colspan='6'><b>Highest Location Trip:</b></td>";
-    echo "<td><b>{$highestLocationTrip} - {$locationTrips[$highestLocationTrip]}</b></td>";
-    echo "</tr>";
+    <table class="trip-table">
+        <thead>
+            <tr>
+                <th>TRIP ID</th>
+                <th>CLIENT NAME</th>
+                <th>PLATE NUMBER</th>
+                <th>DELIVERY DATE</th>
+                <th>SOURCE</th>
+                <th>DESTINATIONS</th>
+                <th>RATE</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Include the database connection
+            include 'Partials/dbConn.php';
 
-    // Find lowest location trip
-    $lowestLocationTrip = array_search(min($locationTrips), $locationTrips);
-    echo "<tr>";
-    echo "<td colspan='6'><b>Lowest Location Trip:</b></td>";
-    echo "<td><b>{$lowestLocationTrip} - {$locationTrips[$lowestLocationTrip]}</b></td>";
-    echo "</tr>";
+            // Check if the form is submitted
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                // Get the selected month and year
+                $selectedMonth = $_POST['month'];
+                $selectedYear = $_POST['year'];
 
-    // Find highest source trip
-    $highestSourceTrip = array_search(max($sourceTrips), $sourceTrips);
-    echo "<tr>";
-    echo "<td colspan='6'><b>Highest Source Trip:</b></td>";
-    echo "<td><b>{$highestSourceTrip} - {$sourceTrips[$highestSourceTrip]}</b></td>";
-    echo "</tr>";
+                // Adjust your SQL query based on the selected month and year
+                $sql = "SELECT * FROM TripMonitor WHERE ";
+                $sql .= "MONTH(DeliveryDate) = $selectedMonth AND YEAR(DeliveryDate) = $selectedYear";
 
-    // Find lowest source trip
-    $lowestSourceTrip = array_search(min($sourceTrips), $sourceTrips);
-    echo "<tr>";
-    echo "<td colspan='6'><b>Lowest Source Trip:</b></td>";
-    echo "<td><b>{$lowestSourceTrip} - {$sourceTrips[$lowestSourceTrip]}</b></td>";
-    echo "</tr>";
+                $result = mysqli_query($conn, $sql);
 
-    echo "<tr>";
-    echo "<td colspan='6'><b>Total Trips:</b></td>";
-    echo "<td><b>{$totalTrips}</b></td>";
-    echo "</tr>";
-}
+                // Initialize variables for total rate earnings, highest and lowest trips
+                $totalRateEarnings = 0;
+                $locationTrips = [];
+                $sourceTrips = [];
+                $totalTrips = 0;
 
-// Close the database connection
-mysqli_close($conn);
-?>
-</tbody>
-        </table>
-    </section>
+                // Check if records exist
+                if (mysqli_num_rows($result) > 0) {
+                    // Loop through the result set and generate table rows
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo "<tr>";
+                        echo "<td>{$row['TripID']}</td>";
+                        echo "<td>{$row['ClientName']}</td>";
+                        echo "<td>{$row['PlateNumber']}</td>";
+                        echo "<td>{$row['DeliveryDate']}</td>";
+                        echo "<td>{$row['Source']}</td>";
+                        echo "<td>{$row['Destination']}</td>";
+                        echo "<td>{$row['Rate']}</td>";
+                        echo "</tr>";
+
+                        // Calculate total rate earnings
+                        $totalRateEarnings += $row['Rate'];
+
+                        // Process source and destination pairs
+                        $source = trim($row['Source']);
+                        $destinations = explode(',', $row['Destination']);
+                        foreach ($destinations as $destination) {
+                            $destination = trim($destination);
+                            $location = $source . ' to ' . $destination;
+                            if (empty($locationTrips[$location])) {
+                                $locationTrips[$location] = 1;
+                            } else {
+                                $locationTrips[$location]++;
+                            }
+                        }
+
+                        // Process source information
+                        if (empty($sourceTrips[$source])) {
+                            $sourceTrips[$source] = 1;
+                        } else {
+                            $sourceTrips[$source]++;
+                        }
+
+                        // Count total trips
+                        $totalTrips++;
+                    }
+
+                    // Display summary information
+                    echo "<tr>";
+                    echo "<td colspan='6'><b>Total Rate Earnings:</b></td>";
+                    echo "<td><b>{$totalRateEarnings}</b></td>";
+                    echo "</tr>";
+
+                    // Find highest location trip
+                    $highestLocationTrip = array_search(max($locationTrips), $locationTrips);
+                    echo "<tr>";
+                    echo "<td colspan='6'><b>Highest Location Trip:</b></td>";
+                    echo "<td><b>{$highestLocationTrip} - {$locationTrips[$highestLocationTrip]}</b></td>";
+                    echo "</tr>";
+
+                    // Find lowest location trip
+                    $lowestLocationTrip = array_search(min($locationTrips), $locationTrips);
+                    echo "<tr>";
+                    echo "<td colspan='6'><b>Lowest Location Trip:</b></td>";
+                    echo "<td><b>{$lowestLocationTrip} - {$locationTrips[$lowestLocationTrip]}</b></td>";
+                    echo "</tr>";
+                } else {
+                    echo "<tr><td colspan='7'>No records found</td></tr>";
+                }
+
+                echo "<tr>";
+                echo "<td colspan='6'><b>Total Trips:</b></td>";
+                echo "<td><b>{$totalTrips}</b></td>";
+                echo "</tr>";
+            }
+
+            // Close the database connection
+            mysqli_close($conn);
+            ?>
+
+        </tbody>
+    </table>
+</section>
+
+
 
   <script>
   let sidebar = document.querySelector(".sidebar");

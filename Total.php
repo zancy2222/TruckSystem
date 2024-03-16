@@ -1,8 +1,3 @@
-<?php
-include 'Partials/dbConn.php';
-$sql = "SELECT * FROM TripMonitor";
-$result = mysqli_query($conn, $sql);
-?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -13,9 +8,10 @@ $result = mysqli_query($conn, $sql);
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <style>
-        .home-section {
+               .home-section {
             padding: 20px;
         }
+
         .trip-table {
             width: 100%;
             border-collapse: collapse;
@@ -48,7 +44,7 @@ $result = mysqli_query($conn, $sql);
      </style>
    </head>
 <body>
-<div class="sidebar">
+  <div class="sidebar">
     <div class="logo-details">
         <div class="logo_name">Truck Management</div>
         <i class='bx bx-menu' id="btn" ></i>
@@ -104,44 +100,113 @@ $result = mysqli_query($conn, $sql);
        </a>
        <span class="tooltip">Total Earnings</span>
      </li>
+  
      <li class="profile">
          
      </li>
     </ul>
   </div>
-  
   <section class="home-section">
-    <div class="text">Trip Monitor</div>
-    <table class="trip-table">
-        <thead>
-            <tr>
-                <th>TRIP ID</th>
-                <th>CLIENT NAME</th>
-                <th>PLATE NUMBER</th>
-                <th>DELIVERY DATE</th>
-                <th>SOURCE</th>
-                <th>DESTINATIONS</th>
-                <th>RATE</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="text">Total Earnings and Trips</div>
+
+    <form action="#" method="post" class="report-form">
+        <label for="month">Select Month:</label>
+        <select name="month" id="month">
             <?php
-            // Loop through the result set and generate table rows
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo "<tr>";
-                echo "<td>{$row['TripID']}</td>";
-                echo "<td>{$row['ClientName']}</td>";
-                echo "<td>{$row['PlateNumber']}</td>";
-                echo "<td>{$row['DeliveryDate']}</td>";
-                echo "<td>{$row['Source']}</td>";
-                echo "<td>{$row['Destination']}</td>";
-                echo "<td>{$row['Rate']}</td>";
-                echo "</tr>";
+            $months = [
+                1 => 'January',
+                2 => 'February',
+                3 => 'March',
+                4 => 'April',
+                5 => 'May',
+                6 => 'June',
+                7 => 'July',
+                8 => 'August',
+                9 => 'September',
+                10 => 'October',
+                11 => 'November',
+                12 => 'December'
+            ];
+
+            foreach ($months as $monthNumber => $monthName) {
+                echo "<option value='$monthNumber'>$monthName</option>";
             }
             ?>
+        </select>
+
+        <label for="year">Select Year:</label>
+        <select name="year" id="year">
+            <?php
+            $startYear = 2020;
+            $endYear = 2030;
+
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                echo "<option value='$year'>$year</option>";
+            }
+            ?>
+        </select>
+
+        <button type="submit">Generate Report</button>
+    </form>
+
+    <table class="trip-table">
+        <thead>
+        <tr>
+            <th>Plate Number</th>
+            <th>Total Earnings</th>
+            <th>Total Trips</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        // Include the database connection
+        include 'Partials/dbConn.php';
+
+        // Fetch total earnings and trips for each plate number
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $selectedMonth = $_POST['month'];
+            $selectedYear = $_POST['year'];
+
+            $sql = "SELECT tm.PlateNumber, SUM(tm.Rate) AS TotalEarnings, COUNT(*) AS TotalTrips
+                    FROM tripmonitor tm
+                    WHERE MONTH(tm.DeliveryDate) = $selectedMonth AND YEAR(tm.DeliveryDate) = $selectedYear
+                    GROUP BY tm.PlateNumber";
+
+            $result = mysqli_query($conn, $sql);
+
+            if ($result && mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $plateNumber = $row['PlateNumber'];
+                    $totalEarnings = $row['TotalEarnings'];
+                    $totalTrips = $row['TotalTrips'];
+
+                    // Get total repair cost for the plate number
+                    $sqlRepair = "SELECT SUM(Cost) AS TotalRepairCost FROM repairexpenses WHERE PlateNumber = '$plateNumber'";
+                    $resultRepair = mysqli_query($conn, $sqlRepair);
+                    $rowRepair = mysqli_fetch_assoc($resultRepair);
+                    $totalRepairCost = $rowRepair['TotalRepairCost'];
+
+                    // Calculate net earnings
+                    $netEarnings = $totalEarnings - $totalRepairCost;
+
+                    echo "<tr>";
+                    echo "<td>{$plateNumber}</td>";
+                    echo "<td>{$netEarnings}</td>";
+                    echo "<td>{$totalTrips}</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='3'>No data available</td></tr>";
+            }
+        }
+
+        // Close the database connection
+        mysqli_close($conn);
+        ?>
         </tbody>
     </table>
 </section>
+
 
 
   <script>
@@ -169,7 +234,3 @@ $result = mysqli_query($conn, $sql);
   </script>
 </body>
 </html>
-
-<?php
-mysqli_close($conn);
-?>

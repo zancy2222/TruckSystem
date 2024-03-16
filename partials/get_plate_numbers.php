@@ -1,6 +1,6 @@
 <?php
 // Include the database connection
-include 'Partials/dbConn.php';
+include 'dbConn.php';
 
 // Fetch data from the Truck table to get plate numbers
 $sql = "SELECT PlateNumber, COUNT(*) AS count FROM TripMonitor GROUP BY PlateNumber";

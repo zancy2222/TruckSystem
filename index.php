@@ -107,6 +107,15 @@ button:hover {
        </a>
        <span class="tooltip">Repair & Expenses</span>
      </li>
+
+
+     <li>
+       <a href="Total.php">
+       <i class='bx bx-money'></i>
+       <span class="links_name">Total Earnings</span>
+       </a>
+       <span class="tooltip">Total Earnings</span>
+     </li>
   
      <li class="profile">
          

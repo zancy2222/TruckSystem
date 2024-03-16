@@ -1,6 +1,6 @@
 <?php
 // Include the database connection
-include 'Partials/dbConn.php';
+include 'dbConn.php';
 
 // Fetch data from the TripMonitor table to get destinations
 $sql = "SELECT Destination, COUNT(*) AS count FROM TripMonitor GROUP BY Destination";

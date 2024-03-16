@@ -88,7 +88,13 @@
        </a>
        <span class="tooltip">Repair & Expenses</span>
      </li>
-  
+     <li>
+       <a href="Total.php">
+       <i class='bx bx-money'></i>
+       <span class="links_name">Total Earnings</span>
+       </a>
+       <span class="tooltip">Total Earnings</span>
+     </li>
      <li class="profile">
          
      </li>
@@ -119,7 +125,7 @@
   <script src="Assets/index.js"></script>
     <script>
 // Fetch data for the bar chart from PHP using AJAX
-fetch('get_destinations.php')
+fetch('partials/get_destinations.php')
     .then(response => response.json())
     .then(data => {
         const barChartOptions = {
@@ -235,7 +241,7 @@ fetch('get_destinations.php')
   
   
 // Fetch data for the pie chart from PHP using AJAX
-fetch('get_plate_numbers.php') // Change the URL to match the PHP script for plate numbers
+fetch('partials/get_plate_numbers.php') // Change the URL to match the PHP script for plate numbers
     .then(response => response.json())
     .then(data => {
         const pieChartOptions = {
