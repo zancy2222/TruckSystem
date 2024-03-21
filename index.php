@@ -116,13 +116,27 @@ button:hover {
        </a>
        <span class="tooltip">Total Earnings</span>
      </li>
+     <li>
+       <a href="Tire.php">
+       <i class='bx bxs-car-mechanic'></i>
+       <span class="links_name">Wheel Module</span>
+       </a>
+       <span class="tooltip">Wheel Module</span>
+     </li>
+
+     <li>
+       <a href="Fuel.php">
+       <i class='bx bxs-gas-pump'></i>
+       <span class="links_name">Fuel Module</span>
+       </a>
+       <span class="tooltip">Fuel Module</span>
+     </li>
   
      <li class="profile">
          
      </li>
     </ul>
   </div>
-  
   <section class="home-section">
     <div class="text">Add Truck</div>
     <div class="form-container">

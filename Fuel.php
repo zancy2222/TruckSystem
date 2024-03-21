@@ -1,13 +1,3 @@
-<?php
-// Include the database connection
-include 'Partials/dbConn.php';
-
-// SQL query to retrieve data from the Truck table
-$sql = "SELECT * FROM Truck";
-$result = mysqli_query($conn, $sql);
-?>
-
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -18,72 +8,44 @@ $result = mysqli_query($conn, $sql);
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <style>
-        .home-section {
-            padding: 20px;
-        }
-        
-        .truck-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-        
-        .truck-table th,
-        .truck-table td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .truck-table th {
-            background-color: #11101D;
-            color: white;
-        }
-        
-        .truck-table tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-        
-        .truck-table td:last-child {
-            display: flex;
-            gap: 10px;
-            justify-content: center; 
-        }
-        
-        .update-link,
-        .delete-link {
-            padding: 8px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        
-        .update-link {
-            background-color: #3498db;
-            color: #fff;
-        }
-        
-        .update-link:hover {
-            background-color: #2980b9;
-        }
-        
-        .delete-link {
-            background-color: #e74c3c;
-            color: #fff;
-        }
-        
-        .delete-link:hover {
-            background-color: #c0392b;
-        }
-        
+.home-section {
+    padding: 20px;
+}
+
+.fuel-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.fuel-table th,
+.fuel-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.fuel-table th {
+    background-color: #11101D;
+    color: white;
+}
+
+.fuel-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.fuel-table td:last-child {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
      </style>
    </head>
 <body>
-<div class="sidebar">
+  <div class="sidebar">
     <div class="logo-details">
         <div class="logo_name">Truck Management</div>
         <i class='bx bx-menu' id="btn" ></i>
@@ -132,6 +94,8 @@ $result = mysqli_query($conn, $sql);
        </a>
        <span class="tooltip">Repair & Expenses</span>
      </li>
+
+
      <li>
        <a href="Total.php">
        <i class='bx bx-money'></i>
@@ -139,6 +103,7 @@ $result = mysqli_query($conn, $sql);
        </a>
        <span class="tooltip">Total Earnings</span>
      </li>
+
      <li>
        <a href="Tire.php">
        <i class='bx bxs-car-mechanic'></i>
@@ -162,34 +127,49 @@ $result = mysqli_query($conn, $sql);
   </div>
   
   <section class="home-section">
-    <div class="text">View Trucks</div>
-    <table class="truck-table">
+    <div class="text">Fuel Section</div>
+
+    <table class="fuel-table">
         <thead>
             <tr>
-                <th>PLATE NUMBER</th>
-                <th>TRUCK TYPE</th>
-                <th>TRUCK MAKE</th>
-                <th>ENGINE NUMBER</th>
-                <th>CHASSIS NUMBER</th>
-                <th>ACTION</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>PO Number</th>
+                <th>Transaction Number</th>
+                <th>Plate Number</th>
+                <th>Price</th>
+                <th>Liters/PCS</th>
+                <th>Amount</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            // Loop through the result set and generate table rows
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo "<tr>";
-                echo "<td>{$row['PlateNumber']}</td>";
-                echo "<td>{$row['TruckType']}</td>";
-                echo "<td>{$row['TruckMake']}</td>";
-                echo "<td>{$row['EngineNumber']}</td>";
-                echo "<td>{$row['ChassisNumber']}</td>";
-                echo "<td>
-                        <a href='#' class='update-link'>UPDATE</a>
-                        <a href='#' class='delete-link'>DELETE</a>
-                      </td>";
-                echo "</tr>";
+            // Include the database connection
+            include 'Partials/dbConn.php';
+
+            // Fetch data from the FuelModule table
+            $sql = "SELECT * FROM FuelModule";
+            $result = mysqli_query($conn, $sql);
+
+            if ($result && mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo "<tr>";
+                    echo "<td>{$row['Date']}</td>";
+                    echo "<td>{$row['Time']}</td>";
+                    echo "<td>{$row['PONumber']}</td>";
+                    echo "<td>{$row['TransactionNumber']}</td>";
+                    echo "<td>{$row['PlateNumber']}</td>";
+                    echo "<td>{$row['Price']}</td>";
+                    echo "<td>{$row['LitersPCS']}</td>";
+                    echo "<td>{$row['Amount']}</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='8'>No data available</td></tr>";
             }
+
+            // Close the database connection
+            mysqli_close($conn);
             ?>
         </tbody>
     </table>
@@ -221,8 +201,3 @@ $result = mysqli_query($conn, $sql);
   </script>
 </body>
 </html>
-
-<?php
-// Close the database connection
-mysqli_close($conn);
-?>

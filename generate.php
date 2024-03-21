@@ -109,6 +109,22 @@
        </a>
        <span class="tooltip">Total Earnings</span>
      </li>
+     <li>
+       <a href="Tire.php">
+       <i class='bx bxs-car-mechanic'></i>
+       <span class="links_name">Wheel Module</span>
+       </a>
+       <span class="tooltip">Wheel Module</span>
+     </li>
+
+     <li>
+       <a href="Fuel.php">
+       <i class='bx bxs-gas-pump'></i>
+       <span class="links_name">Fuel Module</span>
+       </a>
+       <span class="tooltip">Fuel Module</span>
+     </li>
+  
      <li class="profile">
          
      </li>
@@ -119,6 +135,30 @@
     <div class="text">Generate reports</div>
 
     <form action="#" method="post" class="report-form">
+        <!-- Checkbox to select all clients -->
+        <label for="selectAllClients">Select all clients:</label>
+        <input type="checkbox" id="selectAllClients" name="selectAllClients">
+
+        <!-- Select client name -->
+        <label for="client">Select Client Name:</label>
+        <select name="client" id="client">
+            <?php
+            include 'Partials/dbConn.php';
+
+            // Fetch unique client names from the TripMonitor table
+            $sql = "SELECT DISTINCT ClientName FROM TripMonitor";
+            $result = mysqli_query($conn, $sql);
+
+            // Populate the dropdown menu with client names
+            if ($result && mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $clientName = $row['ClientName'];
+                    echo "<option value='$clientName'>$clientName</option>";
+                }
+            }
+            ?>
+        </select>
+
         <!-- Select year -->
         <label for="year">Select Year:</label>
         <select name="year" id="year">
@@ -178,12 +218,8 @@
         </thead>
         <tbody>
             <?php
-            // Include the database connection
             include 'Partials/dbConn.php';
-
-            // Check if the form is submitted
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                // Get the selected year
                 $selectedYear = $_POST['year'];
 
                 // Check if "Select all months" checkbox is checked
@@ -196,6 +232,16 @@
                     $sql = "SELECT * FROM TripMonitor WHERE MONTH(DeliveryDate) = $selectedMonth AND YEAR(DeliveryDate) = $selectedYear";
                 }
 
+                // Fetch data based on selected client name(s)
+                if (isset($_POST['selectAllClients'])) {
+                    // Select all clients
+                    $sql .= " GROUP BY ClientName";
+                } else {
+                    // Select individual client
+                    $selectedClient = $_POST['client'];
+                    $sql .= " AND ClientName = '$selectedClient'";
+                }
+
                 $result = mysqli_query($conn, $sql);
 
                 // Initialize variables for total rate earnings, highest and lowest trips
@@ -204,9 +250,7 @@
                 $sourceTrips = [];
                 $totalTrips = 0;
 
-                // Check if records exist
                 if (mysqli_num_rows($result) > 0) {
-                    // Loop through the result set and generate table rows
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo "<tr>";
                         echo "<td>{$row['TripID']}</td>";
@@ -218,10 +262,8 @@
                         echo "<td>{$row['Rate']}</td>";
                         echo "</tr>";
 
-                        // Calculate total rate earnings
                         $totalRateEarnings += $row['Rate'];
 
-                        // Process source and destination pairs
                         $source = trim($row['Source']);
                         $destinations = explode(',', $row['Destination']);
                         foreach ($destinations as $destination) {
@@ -234,7 +276,7 @@
                             }
                         }
 
-                        // Process source information
+                      
                         if (empty($sourceTrips[$source])) {
                             $sourceTrips[$source] = 1;
                         } else {
